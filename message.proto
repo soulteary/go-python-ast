@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option go_package = "./pkg/pb";
+
+package pb;
+
+// The Converter service definition.
+service Converter {
+  // Sends a Converter request
+  rpc PythonAST (ConvertRequest) returns (ConvertReply) {}
+}
+
+// The request message containing the code.
+message ConvertRequest {
+  string code = 1;
+}
+
+// The response message containing the code parsed
+message ConvertReply {
+  string message = 1;
+}
