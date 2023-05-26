@@ -2,6 +2,7 @@ package web
 
 import (
 	"context"
+	"io"
 	"log"
 	"net/http"
 	"os/signal"
@@ -25,17 +26,13 @@ func Launch() {
 		c.Data(http.StatusOK, "text/html", []byte(ProjectInfo))
 	})
 
-	type Data struct {
-		Code string `json:"code"`
-	}
-
 	route.POST("/api/convert", func(c *gin.Context) {
-		var data Data
-		if err := c.ShouldBindJSON(&data); err != nil {
+		buf, err := io.ReadAll(c.Request.Body)
+		if err != nil {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
-		c.JSON(http.StatusOK, bridge.Convert(data.Code))
+		c.JSON(http.StatusOK, bridge.Convert(string(buf)))
 	})
 
 	srv := &http.Server{
